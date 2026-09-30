@@ -2,12 +2,13 @@ package com.example.stataggregation.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import java.time.Duration;
 
 
 import com.example.stataggregation.model.MatchRequest;
@@ -68,7 +69,20 @@ public class StatAggregationService {
     }
 
     public List<PlayerStatsResponse> getPlayerStats(List<String> playerIds) {
-        return null;
+        List<PlayerStatsResponse> results = new ArrayList<>();
+        for (String id : playerIds) {
+            String playerKey = "player:" + id + ":stats";
+            Map<Object, Object> stats = redisTemplate.opsForHash().entries(playerKey);
+            
+            // Omit unknown players
+            if (!stats.isEmpty()) {
+                long kills = Long.parseLong(stats.getOrDefault("kills", "0").toString());
+                long wins = Long.parseLong(stats.getOrDefault("wins", "0").toString());
+                long playtime = Long.parseLong(stats.getOrDefault("playtime", "0").toString());
+                results.add(new PlayerStatsResponse(id, kills, wins, playtime));
+            }
+        }
+        return results;
     }
 
     public List<Map<String, Object>> getLeaderboard(String stat, int limit) {
