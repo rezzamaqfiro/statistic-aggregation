@@ -3,12 +3,15 @@ package com.example.stataggregation.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 import com.example.stataggregation.model.MatchRequest;
@@ -86,6 +89,22 @@ public class StatAggregationService {
     }
 
     public List<Map<String, Object>> getLeaderboard(String stat, int limit) {
-        return null;
+        String key = "leaderboard:" + stat;
+        Set<ZSetOperations.TypedTuple<String>> range = 
+           redisTemplate.opsForZSet().reverseRangeWithScores(key, 0, limit - 1);
+        
+        List<Map<String, Object>> leaderboard = new ArrayList<>();
+        if (range != null) {
+            int rank = 1;
+            for (ZSetOperations.TypedTuple<String> tuple : range) {
+                Map<String, Object> entry = new LinkedHashMap<>();
+                entry.put("rank", rank++);
+                entry.put("player_id", tuple.getValue());
+                entry.put("score", tuple.getScore().longValue());
+                leaderboard.add(entry);
+                
+            }
+        }
+        return leaderboard;
     }
 }
