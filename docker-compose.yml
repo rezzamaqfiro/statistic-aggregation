@@ -49,3 +49,21 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+
+  # ---
+  # GUI
+  # ---
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - "8081:8080"
+    environment:
+      KAFKA_CLUSTER_0_NAME: local-kafka
+      KAFKA_CLUSTER_0_BOOTSTRAPSERVERS: kafka:9092
+  
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:latest
+    ports:
+      - "8082:8978"
+    depends_on:
+      - oracle-db
