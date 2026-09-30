@@ -111,7 +111,7 @@ statistic-aggregation
 
 1. **Clone the repository:**
 ```bash
-git clone [https://github.com/your-username/statistic-aggregation.git](https://github.com/your-username/statistic-aggregation.git)
+git clone https://github.com/rezzamaqfiro/statistic-aggregation.git
 cd statistic-aggregation
 
 ```
