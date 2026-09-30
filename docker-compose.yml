@@ -60,6 +60,8 @@ services:
     environment:
       KAFKA_CLUSTER_0_NAME: local-kafka
       KAFKA_CLUSTER_0_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      - kafka
   
   cloudbeaver:
     image: dbeaver/cloudbeaver:latest
