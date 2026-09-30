@@ -270,7 +270,7 @@ curl -s "http://localhost:8080/leaderboard?stat=wins&limit=2"
 ### 9. Prometheus Metrics Endpoint
 
 ```bash
-curl -s http://localhost:8080/prometheus
+curl -s http://localhost:8080//actuator/prometheus
 
 ```
 ---
